@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 func compute(fn func(float32, float32) float32) int{
 	return int(fn(3.2,4.3))
@@ -28,5 +31,7 @@ func main(){
 	for i := 0; i < 10; i++ {
 		fmt.Println(f())
 	}
+
+	fmt.Println(math.Sqrt2)
 
 }
