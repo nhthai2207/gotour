@@ -4,12 +4,15 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/tour"
-  packages = ["wc"]
+  packages = [
+    "reader",
+    "wc"
+  ]
   revision = "057704a6290c29d3b08f62f96d3e2db6932f2ef5"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f5e5937fb97855db228a278b280615f27ef34904458734cd243d2d1d2277ee78"
+  inputs-digest = "b687daf2d7a3b1dd27b368d893b716302de163376e3c3366c9cb99723c6d3020"
   solver-name = "gps-cdcl"
   solver-version = 1
