@@ -42,7 +42,7 @@ type IPAddr [4]byte
 func (ip IPAddr) String() string {
 	ss := make([]string, 4)
 	for i, b := range ip {
-		ss[i] = string(b)
+		ss[i] = fmt.Sprintf("%d", int(b))
 	}
 	return strings.Join(ss, ".")
 }
