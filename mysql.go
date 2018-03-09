@@ -1,8 +1,9 @@
-package sql
+package main
 
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -15,14 +16,14 @@ func main() {
 	// Prepare statement for inserting data
 	stmtIns, err := db.Prepare("INSERT INTO squareNum VALUES( ?, ? )") // ? = placeholder
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 	defer stmtIns.Close() // Close the statement when we leave main() / the program terminates
 
 	// Prepare statement for reading data
-	stmtOut, err := db.Prepare("SELECT squareNumber FROM squarenum WHERE number = ?")
+	stmtOut, err := db.Prepare("SELECT squareNumber FROM squareNum WHERE number = ?")
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 	defer stmtOut.Close()
 
@@ -30,7 +31,7 @@ func main() {
 	for i := 0; i < 25; i++ {
 		_, err = stmtIns.Exec(i, (i * i)) // Insert tuples (i, i^2)
 		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
+			panic(err.Error())
 		}
 	}
 
