@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
 )
 
 const (
@@ -17,9 +18,7 @@ const (
 )
 
 func Upload() {
-	//creds := credentials.NewEnvCredentials()
-	creds := credentials.NewSharedCredentials("", "")
-	_, err := creds.Get()
+	creds, err := GetCredential()
 	if err != nil {
 		log.Fatal("Bad credential ")
 		log.Fatal(err)
@@ -33,14 +32,42 @@ func Upload() {
 	}
 
 	// Upload
-	err = AddFileToS3(s, "/data/tmp.txt")
+	err = AddFileToS3(s, "/data/tmp3.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-// AddFileToS3 will upload a single file to S3, it will require a pre-built aws session
-// and will set file info like content type and encryption on the uploaded file.
+func GetCredential() (*credentials.Credentials, error) {
+	provider := []credentials.Provider{&ec2rolecreds.EC2RoleProvider{},
+		&credentials.SharedCredentialsProvider{Filename: "", Profile:  ""},
+		&credentials.EnvProvider{},
+		&credentials.StaticProvider{Value: credentials.Value{
+			AccessKeyID:     "",
+			SecretAccessKey: "",
+			SessionToken:    "",
+		}}}
+
+	for _, p := range provider {
+		_, err := getCredentialOfProvider(p)
+		if err == nil {
+			return credentials.NewCredentials(p), nil
+		}
+	}
+
+	return nil, credentials.ErrNoValidProvidersFoundInChain
+}
+
+func getCredentialOfProvider(provider credentials.Provider) (v credentials.Value, err error){
+	defer func(){
+		if x := recover(); x != nil {
+			log.Printf("run time panic: %v", x)
+			err = credentials.ErrNoValidProvidersFoundInChain
+		}
+	}()
+	return provider.Retrieve();
+}
+
 func AddFileToS3(s *session.Session, fileDir string) error {
 
 	// Open the file for use
